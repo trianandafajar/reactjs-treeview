@@ -9,9 +9,10 @@ const Home = ({ page }) => {
         <div className="container">
           <h1 className="title">My {page}</h1>
           <p className="info">
-            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Consectetur, quasi.
+            Lorem ipsum, dolor sit amet consectetur adipisicing elit.
+            Consectetur, quasi.
           </p>
-          <button className="btn">See More..</button>
+          <button className="btn">See More...</button>
         </div>
       </div>
     </>
