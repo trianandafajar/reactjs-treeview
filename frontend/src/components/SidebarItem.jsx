@@ -3,39 +3,50 @@ import PropTypes from "prop-types";
 
 const SidebarItem = ({ item }) => {
   const [open, setOpen] = useState(false);
+  const hasChildren = Boolean(item.childrens?.length);
 
-  if (item.childrens) {
-    return (
-      <div className={open ? "sidebar-item open" : "sidebar-item"}>
-        <div className="sidebar-title">
-          <span>
-            {item.icon && <i className={item.icon}></i>}
-            {item.title}
-          </span>
-          <i
-            className="bi-chevron-left toggle-btn icon-item"
+  return (
+    <div className={`sidebar-item ${open ? "open" : ""}`}>
+      <div className="sidebar-title">
+        <span>
+          {item.icon && <i className={item.icon}></i>}
+          {item.title}
+        </span>
+        {hasChildren && (
+          <button
+            className="toggle-btn icon-item"
             onClick={() => setOpen(!open)}
-          ></i>
-        </div>
+            aria-expanded={open}
+            aria-label={`Toggle ${item.title}`}
+          >
+            <i className="bi-chevron-left"></i>
+          </button>
+        )}
+      </div>
+      {hasChildren ? (
         <div className="sidebar-content">
-          {item.childrens.map((child, index) => (
-            <SidebarItem key={index} item={child} />
+          {item.childrens.map((child) => (
+            <SidebarItem key={child.id || child.title} item={child} />
           ))}
         </div>
-      </div>
-    );
-  } else {
-    return (
-      <a href={item.path || "#"} className="sidebar-item plain">
-        {item.icon && <i className={item.icon}></i>}
-        {item.title}
-      </a>
-    );
-  }
+      ) : (
+        <a href={item.path || "#"} className="sidebar-item plain">
+          {item.icon && <i className={item.icon}></i>}
+          {item.title}
+        </a>
+      )}
+    </div>
+  );
 };
 
 SidebarItem.propTypes = {
-  item: PropTypes.object.isRequired,
+  item: PropTypes.shape({
+    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    title: PropTypes.string.isRequired,
+    path: PropTypes.string,
+    icon: PropTypes.string,
+    childrens: PropTypes.arrayOf(PropTypes.object),
+  }).isRequired,
 };
 
 export default SidebarItem;
