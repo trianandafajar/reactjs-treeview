@@ -3,32 +3,24 @@ import SidebarItem from "./SidebarItem.jsx";
 import axios from "axios";
 
 const Sidebar = () => {
-  const [items, setItems] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [items, setItems] = useState([]);
+  const [status, setStatus] = useState({ loading: true, error: "" });
 
   useEffect(() => {
-    const getData = async () => {
-      try {
-        const response = await axios.get("/menu");
-        setItems(response.data);
-      } catch (err) {
-        setError("Failed to load menu items");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    getData();
+    axios
+      .get("/menu")
+      .then((res) => setItems(res.data))
+      .catch(() => setStatus({ loading: false, error: "Failed to load menu items" }))
+      .finally(() => setStatus((prev) => ({ ...prev, loading: false })));
   }, []);
 
-  if (loading) return <div className="sidebar">Loading...</div>;
-  if (error) return <div className="sidebar error">{error}</div>;
+  if (status.loading) return <div className="sidebar">Loading...</div>;
+  if (status.error) return <div className="sidebar error">{status.error}</div>;
 
   return (
     <div className="sidebar">
-      {items?.map((item) => (
-        <SidebarItem key={item.id || item.name} item={item} />
+      {items.map((item, i) => (
+        <SidebarItem key={item.id || item.name || i} item={item} />
       ))}
     </div>
   );
