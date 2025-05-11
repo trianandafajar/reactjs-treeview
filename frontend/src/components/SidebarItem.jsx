@@ -3,36 +3,40 @@ import PropTypes from "prop-types";
 
 const SidebarItem = ({ item }) => {
   const [open, setOpen] = useState(false);
-  const hasChildren = Boolean(item.childrens?.length);
+  const { title, path, icon, childrens = [] } = item;
+  const hasChildren = childrens.length > 0;
+
+  const toggleOpen = () => setOpen((prev) => !prev);
 
   return (
     <div className={`sidebar-item ${open ? "open" : ""}`}>
       <div className="sidebar-title">
         <span>
-          {item.icon && <i className={item.icon}></i>}
-          {item.title}
+          {icon && <i className={icon}></i>}
+          {title}
         </span>
         {hasChildren && (
           <button
             className="toggle-btn icon-item"
-            onClick={() => setOpen(!open)}
+            onClick={toggleOpen}
             aria-expanded={open}
-            aria-label={`Toggle ${item.title}`}
+            aria-label={`Toggle ${title}`}
           >
             <i className="bi-chevron-left"></i>
           </button>
         )}
       </div>
+
       {hasChildren ? (
         <div className="sidebar-content">
-          {item.childrens.map((child) => (
-            <SidebarItem key={child.id || child.title} item={child} />
+          {childrens.map((child, idx) => (
+            <SidebarItem key={child.id || child.title || idx} item={child} />
           ))}
         </div>
       ) : (
-        <a href={item.path || "#"} className="sidebar-item plain">
-          {item.icon && <i className={item.icon}></i>}
-          {item.title}
+        <a href={path || "#"} className="sidebar-item plain">
+          {icon && <i className={icon}></i>}
+          {title}
         </a>
       )}
     </div>
