@@ -1,7 +1,7 @@
 import Sidebar from "./Sidebar.jsx";
 import PropTypes from "prop-types";
 
-const Home = ({ page = "Page" }) => (
+const Home = ({ page }) => (
   <div className="main">
     <Sidebar />
     <div className="main-content">
@@ -9,7 +9,7 @@ const Home = ({ page = "Page" }) => (
       <p className="info">
         Lorem ipsum, dolor sit amet consectetur adipisicing elit. Consectetur, quasi.
       </p>
-      <button className="btn" aria-label="See More Information">
+      <button className="btn" aria-label="See More Information" type="button">
         See More...
       </button>
     </div>
@@ -18,6 +18,10 @@ const Home = ({ page = "Page" }) => (
 
 Home.propTypes = {
   page: PropTypes.string,
+};
+
+Home.defaultProps = {
+  page: "Page",
 };
 
 export default Home;
