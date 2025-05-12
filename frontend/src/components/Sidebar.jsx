@@ -7,15 +7,42 @@ const Sidebar = () => {
   const [status, setStatus] = useState({ loading: true, error: "" });
 
   useEffect(() => {
-    axios
-      .get("/menu")
-      .then((res) => setItems(res.data))
-      .catch(() => setStatus({ loading: false, error: "Failed to load menu items" }))
-      .finally(() => setStatus((prev) => ({ ...prev, loading: false })));
+    const fetchData = async () => {
+      try {
+        const res = await axios.get("/menu");
+        if (res.status === 200 && Array.isArray(res.data)) {
+          setItems(res.data);
+        } else {
+          setStatus({ loading: false, error: "Invalid data format" });
+        }
+      } catch (err) {
+        setStatus({
+          loading: false,
+          error: err.response?.data?.message || "Failed to load menu items",
+        });
+      } finally {
+        setStatus((prev) => ({ ...prev, loading: false }));
+      }
+    };
+    
+    fetchData();
   }, []);
 
-  if (status.loading) return <div className="sidebar">Loading...</div>;
-  if (status.error) return <div className="sidebar error">{status.error}</div>;
+  if (status.loading) {
+    return (
+      <div className="sidebar">
+        <p>Loading menu...</p>
+      </div>
+    );
+  }
+
+  if (status.error) {
+    return (
+      <div className="sidebar error">
+        <p>{status.error}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="sidebar">
