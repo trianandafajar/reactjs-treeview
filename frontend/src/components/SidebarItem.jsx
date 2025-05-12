@@ -1,5 +1,6 @@
 import { useState } from "react";
 import PropTypes from "prop-types";
+import classNames from "classnames";
 
 const SidebarItem = ({ item }) => {
   const [open, setOpen] = useState(false);
@@ -8,36 +9,40 @@ const SidebarItem = ({ item }) => {
 
   const toggleOpen = () => setOpen((prev) => !prev);
 
+  // Conditional rendering for link or button
+  const renderLink = hasChildren ? (
+    <button
+      className="toggle-btn icon-item"
+      onClick={toggleOpen}
+      aria-expanded={open}
+      aria-controls={`sidebar-item-${title}`}
+      aria-label={`Toggle ${title}`}
+    >
+      <i className="bi-chevron-left"></i>
+    </button>
+  ) : (
+    <a href={path || "#"} className="sidebar-item plain" onClick={(e) => !path && e.preventDefault()}>
+      {icon && <i className={icon}></i>}
+      {title}
+    </a>
+  );
+
   return (
-    <div className={`sidebar-item ${open ? "open" : ""}`}>
+    <div className={classNames("sidebar-item", { open })}>
       <div className="sidebar-title">
         <span>
           {icon && <i className={icon}></i>}
           {title}
         </span>
-        {hasChildren && (
-          <button
-            className="toggle-btn icon-item"
-            onClick={toggleOpen}
-            aria-expanded={open}
-            aria-label={`Toggle ${title}`}
-          >
-            <i className="bi-chevron-left"></i>
-          </button>
-        )}
+        {renderLink}
       </div>
 
-      {hasChildren ? (
-        <div className="sidebar-content">
+      {hasChildren && open && (
+        <div className="sidebar-content" id={`sidebar-item-${title}`}>
           {childrens.map((child, idx) => (
             <SidebarItem key={child.id || child.title || idx} item={child} />
           ))}
         </div>
-      ) : (
-        <a href={path || "#"} className="sidebar-item plain">
-          {icon && <i className={icon}></i>}
-          {title}
-        </a>
       )}
     </div>
   );
